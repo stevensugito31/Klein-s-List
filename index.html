@@ -41,6 +41,28 @@
             font-size: 14px;
         }
         
+        /* SEARCH */
+        .search-box {
+            padding: 15px 20px;
+            background: white;
+            margin: 20px 20px 0 20px;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid #eee;
+        }
+        .search-box input {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .search-box input:focus {
+            border-color: #6b4c9a;
+        }
+        
         /* TAB NAVIGATION */
         .tabs {
             display: flex;
@@ -72,8 +94,8 @@
         /* TABLE */
         .table-container {
             background: white;
-            margin: 20px;
-            border-radius: 8px;
+            margin: 0 20px 20px 20px;
+            border-radius: 0 0 8px 8px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
@@ -226,6 +248,11 @@
         <span>Last Updated: <strong id="last-updated">-</strong></span>
     </div>
 
+    <!-- SEARCH BAR -->
+    <div class="search-box">
+        <input type="text" id="search-input" placeholder="🔍 Cari judul komik..." onkeyup="searchDoujin()">
+    </div>
+
     <!-- TABS -->
     <div class="tabs" id="tabs"></div>
 
@@ -354,12 +381,42 @@
             document.getElementById('last-updated').textContent = new Date().toLocaleDateString('id-ID');
         }
 
+        // SEARCH FUNCTION
+        function searchDoujin() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const tbody = document.getElementById('list-body');
+            tbody.innerHTML = '';
+            
+            const filtered = doujinList.filter(d => d.title.toLowerCase().includes(query));
+            
+            filtered.forEach(d => {
+                const statusClass = d.status === 'Selesai' ? 'badge-selesai' : 
+                                   d.status === 'Ongoing' ? 'badge-ongoing' : 'badge-hiatus';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td><img src="${d.cover}" class="cover" alt="${d.title}"></td>
+                        <td><strong>${d.title}</strong></td>
+                        <td>${d.chapter}</td>
+                        <td><span class="badge ${statusClass}">${d.status}</span></td>
+                        <td><a href="${d.link}" target="_blank">Link</a></td>
+                        <td>${d.newUpdate}</td>
+                        <td><span class="note">${d.notes}</span></td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('total-count').textContent = filtered.length;
+        }
+
         // SHOW LIST
         function showList() {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab')[0].classList.add('active');
             document.getElementById('list-content').classList.add('active');
             document.getElementById('detail-content').classList.remove('active');
+            document.getElementById('search-input').value = '';
+            renderList();
         }
 
         // SHOW DETAIL
