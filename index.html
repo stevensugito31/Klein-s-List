@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koleksi Komik</title>
+    <style>
+        body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; background: #1a1a1a; color: #fff; }
+        h1 { text-align: center; }
+        .komik { background: #2a2a2a; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .komik h3 { margin: 0 0 5px 0; color: #ff6b6b; }
+        .komik p { margin: 0; color: #ccc; font-size: 14px; }
+        .tag { display: inline-block; background: #444; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px; }
+    </style>
+</head>
+<body>
+    <h1>📚 Koleksi Komik</h1>
+    <div id="daftar"></div>
+
+    <script>
+        const komik = [
+            { judul: "One Piece", chapter: 1080, status: "Ongoing", genre: "Adventure" },
+            { judul: "Jujutsu Kaisen", chapter: 236, status: "Completed", genre: "Action" },
+            { judul: "Chainsaw Man", chapter: 145, status: "Ongoing", genre: "Action" }
+        ];
+
+        const container = document.getElementById('daftar');
+        komik.forEach(k => {
+            container.innerHTML += `
+                <div class="komik">
+                    <h3>${k.judul}</h3>
+                    <p>Chapter: ${k.chapter} | Status: <span class="tag">${k.status}</span> <span class="tag">${k.genre}</span></p>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>
