@@ -3,36 +3,417 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koleksi Komik</title>
+    <title>Klein's List</title>
     <style>
-        body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 20px; background: #1a1a1a; color: #fff; }
-        h1 { text-align: center; }
-        .komik { background: #2a2a2a; padding: 15px; margin: 10px 0; border-radius: 8px; }
-        .komik h3 { margin: 0 0 5px 0; color: #ff6b6b; }
-        .komik p { margin: 0; color: #ccc; font-size: 14px; }
-        .tag { display: inline-block; background: #444; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            background: #f5f5f5; 
+            color: #333;
+        }
+        
+        /* HEADER */
+        .header {
+            background: #6b4c9a;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 { 
+            font-size: 36px; 
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .header p { 
+            font-size: 14px; 
+            opacity: 0.9;
+        }
+        
+        /* STATS */
+        .stats {
+            background: #5a3d8a;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            font-size: 14px;
+        }
+        
+        /* TAB NAVIGATION */
+        .tabs {
+            display: flex;
+            background: white;
+            border-bottom: 2px solid #e0e0e0;
+            overflow-x: auto;
+        }
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 13px;
+            color: #666;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+        }
+        .tab.active {
+            color: #6b4c9a;
+            border-bottom-color: #6b4c9a;
+            font-weight: 600;
+        }
+        .tab:hover { color: #6b4c9a; }
+        
+        /* CONTENT */
+        .content { display: none; }
+        .content.active { display: block; }
+        
+        /* TABLE */
+        .table-container {
+            background: white;
+            margin: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        th {
+            background: #6b4c9a;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+        tr:hover { background: #f9f9f9; }
+        
+        /* COVER IMAGE */
+        .cover {
+            width: 60px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        /* BADGES */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge-selesai { background: #28a745; color: white; }
+        .badge-ongoing { background: #007bff; color: white; }
+        .badge-hiatus { background: #ffc107; color: #333; }
+        
+        /* NOTES BADGE */
+        .note {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #6b4c9a;
+            color: white;
+        }
+        
+        /* LINK */
+        a { color: #6b4c9a; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        
+        /* DETAIL PAGE */
+        .detail-header {
+            background: #6b4c9a;
+            color: white;
+            padding: 30px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .detail-header img {
+            width: 120px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .detail-header h2 { font-size: 28px; margin-bottom: 10px; }
+        
+        .detail-info {
+            padding: 20px;
+            background: white;
+            margin: 20px;
+            border-radius: 8px;
+        }
+        .detail-row {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .detail-label {
+            width: 100px;
+            font-weight: 600;
+            color: #666;
+        }
+        .detail-value { flex: 1; }
+        .genre-tag {
+            display: inline-block;
+            background: #fff3cd;
+            color: #856404;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin: 2px;
+        }
+        
+        .characters {
+            padding: 20px;
+            background: white;
+            margin: 20px;
+            border-radius: 8px;
+        }
+        .char-row {
+            display: flex;
+            gap: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+        .char-row img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .char-name { font-weight: 600; width: 150px; }
+        .char-chapters { color: #666; font-size: 13px; }
+        
+        .back-btn {
+            display: inline-block;
+            margin: 20px;
+            padding: 10px 20px;
+            background: #6b4c9a;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+        }
+        .back-btn:hover { background: #5a3d8a; }
     </style>
 </head>
 <body>
-    <h1>📚 Koleksi Komik</h1>
-    <div id="daftar"></div>
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1>Klein's List</h1>
+        <p>The Fool Added. Doujin Archive</p>
+    </div>
+    
+    <!-- STATS -->
+    <div class="stats">
+        <span>Total Doujin: <strong id="total-count">0</strong></span>
+        <span>Last Updated: <strong id="last-updated">-</strong></span>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs" id="tabs"></div>
+
+    <!-- LIST CONTENT -->
+    <div class="content active" id="list-content">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cover</th>
+                        <th>Title</th>
+                        <th>Total Chapter</th>
+                        <th>Status</th>
+                        <th>Link Detail</th>
+                        <th># New Update</th>
+                        <th>My Notes</th>
+                    </tr>
+                </thead>
+                <tbody id="list-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- DETAIL CONTENT -->
+    <div class="content" id="detail-content"></div>
 
     <script>
-        const komik = [
-            { judul: "One Piece", chapter: 1080, status: "Ongoing", genre: "Adventure" },
-            { judul: "Jujutsu Kaisen", chapter: 236, status: "Completed", genre: "Action" },
-            { judul: "Chainsaw Man", chapter: 145, status: "Ongoing", genre: "Action" }
+        // DATA KOMIK
+        const doujinList = [
+            {
+                id: 1,
+                title: "Circles",
+                chapter: 215,
+                status: "Selesai",
+                link: "https://example.com/circles",
+                newUpdate: 215,
+                notes: "Absolute Cinema",
+                cover: "https://via.placeholder.com/60x80/6b4c9a/ffffff?text=C",
+                authors: ["Author Name"],
+                genres: ["Big Ass", "Big Breast", "Full Color", "Harem"],
+                characters: [
+                    { name: "Character 1", chapters: "1, 3, 4, 6, 7, 10-12", img: "https://via.placeholder.com/50x50/6b4c9a/ffffff?text=C1" },
+                    { name: "Character 2", chapters: "15-17, 19, 20", img: "https://via.placeholder.com/50x50/6b4c9a/ffffff?text=C2" }
+                ]
+            },
+            {
+                id: 2,
+                title: "I'm the Only Man on the Military Base",
+                chapter: 63,
+                status: "Ongoing",
+                link: "https://example.com/military",
+                newUpdate: 63,
+                notes: "Absolute Cinema",
+                cover: "https://via.placeholder.com/60x80/6b4c9a/ffffff?text=M",
+                authors: ["Author Name"],
+                genres: ["Action", "Harem", "Military"],
+                characters: [
+                    { name: "MC", chapters: "1-63", img: "https://via.placeholder.com/50x50/6b4c9a/ffffff?text=MC" }
+                ]
+            },
+            {
+                id: 3,
+                title: "Love Cheer",
+                chapter: 9,
+                status: "Ongoing",
+                link: "https://example.com/love-cheer",
+                newUpdate: 9,
+                notes: "Absolute Cinema",
+                cover: "https://via.placeholder.com/60x80/6b4c9a/ffffff?text=LC",
+                authors: ["Author Name"],
+                genres: ["Romance", "School", "Full Color"],
+                characters: [
+                    { name: "Cheerleader", chapters: "1-9", img: "https://via.placeholder.com/50x50/6b4c9a/ffffff?text=CH" }
+                ]
+            },
+            {
+                id: 4,
+                title: "Love Quest",
+                chapter: 22,
+                status: "Ongoing",
+                link: "https://example.com/love-quest",
+                newUpdate: 22,
+                notes: "Absolute Cinema",
+                cover: "https://via.placeholder.com/60x80/6b4c9a/ffffff?text=LQ",
+                authors: ["Author Name"],
+                genres: ["Fantasy", "Adventure", "Romance"],
+                characters: [
+                    { name: "Hero", chapters: "1-22", img: "https://via.placeholder.com/50x50/6b4c9a/ffffff?text=H" }
+                ]
+            }
         ];
 
-        const container = document.getElementById('daftar');
-        komik.forEach(k => {
-            container.innerHTML += `
-                <div class="komik">
-                    <h3>${k.judul}</h3>
-                    <p>Chapter: ${k.chapter} | Status: <span class="tag">${k.status}</span> <span class="tag">${k.genre}</span></p>
+        // RENDER TABS
+        function renderTabs() {
+            const tabsContainer = document.getElementById('tabs');
+            tabsContainer.innerHTML = '<button class="tab active" onclick="showList()">📋 List</button>';
+            
+            doujinList.forEach(d => {
+                tabsContainer.innerHTML += `<button class="tab" onclick="showDetail(${d.id})">${d.title}</button>`;
+            });
+        }
+
+        // RENDER LIST
+        function renderList() {
+            const tbody = document.getElementById('list-body');
+            tbody.innerHTML = '';
+            
+            doujinList.forEach(d => {
+                const statusClass = d.status === 'Selesai' ? 'badge-selesai' : 
+                                   d.status === 'Ongoing' ? 'badge-ongoing' : 'badge-hiatus';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td><img src="${d.cover}" class="cover" alt="${d.title}"></td>
+                        <td><strong>${d.title}</strong></td>
+                        <td>${d.chapter}</td>
+                        <td><span class="badge ${statusClass}">${d.status}</span></td>
+                        <td><a href="${d.link}" target="_blank">Link</a></td>
+                        <td>${d.newUpdate}</td>
+                        <td><span class="note">${d.notes}</span></td>
+                    </tr>
+                `;
+            });
+            
+            document.getElementById('total-count').textContent = doujinList.length;
+            document.getElementById('last-updated').textContent = new Date().toLocaleDateString('id-ID');
+        }
+
+        // SHOW LIST
+        function showList() {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab')[0].classList.add('active');
+            document.getElementById('list-content').classList.add('active');
+            document.getElementById('detail-content').classList.remove('active');
+        }
+
+        // SHOW DETAIL
+        function showDetail(id) {
+            const d = doujinList.find(x => x.id === id);
+            if (!d) return;
+            
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const detail = document.getElementById('detail-content');
+            detail.innerHTML = `
+                <button class="back-btn" onclick="showList()">← Kembali ke List</button>
+                
+                <div class="detail-header">
+                    <img src="${d.cover.replace('60x80', '120x160')}" alt="${d.title}">
+                    <div>
+                        <h2>${d.title}</h2>
+                        <p>Total Chapter: ${d.chapter} | Status: ${d.status}</p>
+                    </div>
+                </div>
+                
+                <div class="detail-info">
+                    <div class="detail-row">
+                        <div class="detail-label">Authors</div>
+                        <div class="detail-value">${d.authors.join(', ')}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Genres</div>
+                        <div class="detail-value">
+                            ${d.genres.map(g => `<span class="genre-tag">${g}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="characters">
+                    <h3 style="margin-bottom: 15px; color: #6b4c9a;">Characters</h3>
+                    ${d.characters.map(c => `
+                        <div class="char-row">
+                            <img src="${c.img}" alt="${c.name}">
+                            <div class="char-name">${c.name}</div>
+                            <div class="char-chapters">Scene Chapter: ${c.chapters}</div>
+                        </div>
+                    `).join('')}
                 </div>
             `;
-        });
+            
+            document.getElementById('list-content').classList.remove('active');
+            detail.classList.add('active');
+        }
+
+        // INIT
+        renderTabs();
+        renderList();
     </script>
 </body>
 </html>
